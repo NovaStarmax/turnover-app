@@ -276,3 +276,27 @@ predictions = [
         ],
     },
 ]
+
+users = [
+    {
+        "id": 1,
+        "email": "admin@entreprise.fr",
+        "password": "admin123",
+        "role": "RH_ADMIN",
+        "name": "Mme Y",
+    },
+    {
+        "id": 2,
+        "email": "rh@entreprise.fr",
+        "password": "rh123",
+        "role": "RH_STANDARD",
+        "name": "C. Vidal",
+    },
+    {
+        "id": 3,
+        "email": "manager@entreprise.fr",
+        "password": "manager123",
+        "role": "MANAGER",
+        "name": "P. Rousseau",
+    },
+]

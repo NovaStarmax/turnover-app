@@ -1,12 +1,17 @@
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Depends
 from services import prediction_service
 from mock_data import employees
 from schemas.prediction import PredictionOut
+from core.dependencies import get_current_user, require_role
 
 router = APIRouter()
 
 
-@router.get("/", response_model=list[PredictionOut])
+@router.get(
+    "/",
+    response_model=list[PredictionOut],
+    dependencies=[Depends(require_role(["RH_ADMIN", "RH_STANDARDS"]))],
+)
 def get_predictions(
     risk: str | None = Query(default=None),
     service: str | None = Query(default=None),
@@ -15,7 +20,7 @@ def get_predictions(
 
 
 @router.get("/{employee_id}", response_model=PredictionOut)
-def get_prediction(employee_id: str):
+def get_prediction(employee_id: str, _: dict = Depends(get_current_user)):
     prediction = prediction_service.get_by_employee_id(employee_id)
 
     if not prediction:
