@@ -1,5 +1,6 @@
-from fastapi import APIRouter, HTTPException
-from schemas.auth import LoginRequest, LoginResponse
+from fastapi import APIRouter, Depends, HTTPException
+from core.dependencies import require_role
+from schemas.auth import LoginRequest, LoginResponse, RegisterRequest, RegisterResponse
 from services import auth_service
 
 router = APIRouter()
@@ -16,5 +17,22 @@ def login(body: LoginRequest):
     if not result:
         # 401 = Unauthorized — invalid credentials
         raise HTTPException(status_code=401, detail="Email ou mot de passe incorrect")
+
+    return result
+
+
+@router.post(
+    "/register",
+    response_model=RegisterResponse,
+    dependencies=[Depends(require_role(["RH_ADMIN"]))],
+)
+def register(body: RegisterRequest):
+    result = auth_service.register(body.email, body.role)
+
+    if not result:
+        raise HTTPException(
+            status_code=409,  # 409 Conflict — ressource déjà existante
+            detail="Un compte avec cet email existe déjà",
+        )
 
     return result
