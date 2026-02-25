@@ -1,32 +1,11 @@
-## Routes à implémenter
+## Ce qui manque
 
-**Auth**
-```
-POST   /auth/login          → reçoit email + password, retourne JWT
-```
+- Hashing des passwords (bcrypt) — prévu quand la BDD arrive
 
-**Employés**
-```
-GET    /employees            → liste paginée (page, limit, service)
-GET    /employees/:id        → détail d'un employé
-```
+- Persistance réelle — tout est en mémoire, remis à zéro au redémarrage
 
-**Prédictions / Scores**
-```
-GET    /predictions          → liste du dernier batch (filtrable par service, risk)
-GET    /predictions/:id      → score + facteurs SHAP d'un employé
-```
+- Pagination sur /employees et /predictions — prévu côté BDD
 
-**Utilisateurs**
-```
-GET    /users/me             → utilisateur connecté
-GET    /users                → liste (RH_ADMIN seulement)
-PATCH  /users/:id/role       → modifier le rôle (RH_ADMIN seulement)
-```
+- Route POST /predictions/batch — côté ML, ton pote s'en charge
 
-**Admin**
-```
-GET    /health               → statut API
-GET    /metrics              → nb requêtes, latence, date dernier batch
-GET    /audit/logs           → journal d'audit
-```
+=> La page admin, onglet modele et dérivée
