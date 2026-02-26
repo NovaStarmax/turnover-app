@@ -1,17 +1,30 @@
-import { Link } from "react-router-dom"
-import { Card } from "@/components/ui/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
-import RiskBadge from "@/components/ui/RiskBadge"
+import { Link } from "react-router-dom";
+import { Card } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import RiskBadge from "@/components/ui/RiskBadge";
 
-export default function EmployeesTable({ employees }) {
-  if (employees.length === 0) {
+export default function EmployeesTable({ employees, loading }) {
+  if (loading)
+    return (
+      <Card className="flex items-center justify-center h-40">
+        <p className="text-sm text-muted-foreground">Chargement...</p>
+      </Card>
+    );
+
+  if (employees.length === 0)
     return (
       <Card className="flex items-center justify-center h-40">
         <p className="text-sm text-muted-foreground">Aucun résultat</p>
       </Card>
-    )
-  }
+    );
 
   return (
     <Card className="overflow-hidden">
@@ -30,11 +43,12 @@ export default function EmployeesTable({ employees }) {
         <TableBody>
           {employees.map((emp) => (
             <TableRow key={emp.id}>
-
               <TableCell>
                 <div>
                   <p className="text-sm font-medium">{emp.name}</p>
-                  <p className="text-xs text-muted-foreground font-mono">{emp.id}</p>
+                  <p className="text-xs text-muted-foreground font-mono">
+                    {emp.id}
+                  </p>
                 </div>
               </TableCell>
 
@@ -54,7 +68,9 @@ export default function EmployeesTable({ employees }) {
                       style={{ width: `${emp.score * 100}%` }}
                     />
                   </div>
-                  <span className="text-xs font-mono">{emp.score.toFixed(2)}</span>
+                  <span className="text-xs font-mono">
+                    {emp.score.toFixed(2)}
+                  </span>
                 </div>
               </TableCell>
 
@@ -69,11 +85,10 @@ export default function EmployeesTable({ employees }) {
                   </Button>
                 </Link>
               </TableCell>
-
             </TableRow>
           ))}
         </TableBody>
       </Table>
     </Card>
-  )
+  );
 }

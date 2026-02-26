@@ -8,6 +8,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 const navItems = [
   { to: "/dashboard", label: "Vue d'ensemble", icon: LayoutDashboard },
@@ -17,6 +18,7 @@ const navItems = [
 
 export default function Sidebar() {
   const navigate = useNavigate();
+  const { logout } = useAuth();
   return (
     <aside className="w-56 h-screen bg-sidebar border-r border-sidebar-border flex flex-col fixed top-0 left-0">
       {/* Logo */}
@@ -51,7 +53,6 @@ export default function Sidebar() {
       </nav>
 
       {/* Utilisateur en bas */}
-      {/* Utilisateur en bas */}
       <div className="p-4 border-t border-sidebar-border">
         <Popover>
           <PopoverTrigger asChild>
@@ -73,7 +74,10 @@ export default function Sidebar() {
               variant="ghost"
               size="sm"
               className="w-full justify-start gap-2 text-destructive hover:text-destructive hover:bg-destructive/10"
-              onClick={() => navigate("/")}
+              onClick={() => {
+                logout();
+                navigate("/");
+              }}
             >
               <LogOut size={14} />
               Se déconnecter

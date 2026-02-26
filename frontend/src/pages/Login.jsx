@@ -1,4 +1,6 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -12,21 +14,36 @@ import { Label } from "@/components/ui/label";
 
 export default function Login() {
   const navigate = useNavigate();
+  const { login } = useAuth(); // Comme l’app est enveloppée dans AuthProvider, on a accès à login() via le contexte
 
-  const handleLogin = (e) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Simule une connexion
-    navigate("/dashboard");
+    setError(null);
+    setLoading(true);
+
+    try {
+      await login(email, password);
+      navigate("/dashboard");
+    } catch (err) {
+      // axios met l'erreur API dans err.response.data.detail
+      setError(err.response?.data?.detail ?? "Erreur de connexion");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="min-h-[calc(100vh-0px)] flex items-center justify-center bg-background px-4">
+    <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="text-2xl">Connexion</CardTitle>
           <CardDescription>
-            Bienvenue dans turnover app, connectez-vous pour accéder à votre
-            tableau de bord.
+            Accède au dashboard RH. Authentification réelle.
           </CardDescription>
         </CardHeader>
 
@@ -37,17 +54,28 @@ export default function Login() {
               <Input
                 id="email"
                 type="email"
-                placeholder="antoine@entreprise.com"
+                placeholder="admin@entreprise.fr"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="password">Mot de passe</Label>
-              <Input id="password" type="password" placeholder="••••••••" />
+              <Input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
             </div>
 
-            <Button type="submit" className="w-full">
-              Se connecter →
+            {/* Affiche l'erreur si login échoue */}
+            {error && <p className="text-sm text-destructive">{error}</p>}
+
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Connexion..." : "Se connecter →"}
             </Button>
           </form>
         </CardContent>
