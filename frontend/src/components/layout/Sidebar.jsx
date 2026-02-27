@@ -1,13 +1,12 @@
 import { NavLink, Link } from "react-router-dom";
-import { LayoutDashboard, Users, ShieldCheck } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { LayoutDashboard, Users, ShieldCheck, LogOut } from "lucide-react";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { LogOut } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 
 const navItems = [
@@ -18,10 +17,20 @@ const navItems = [
 
 export default function Sidebar() {
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
+
+  // Initiales depuis le nom — "Mme Y" → "MY", "C. Vidal" → "CV"
+  const initials = user?.name
+    ? user.name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .slice(0, 2)
+        .toUpperCase()
+    : "?";
+
   return (
     <aside className="w-56 h-screen bg-sidebar border-r border-sidebar-border flex flex-col fixed top-0 left-0">
-      {/* Logo */}
       <Link
         to="/dashboard"
         className="px-5 py-5 border-b border-sidebar-border block hover:bg-sidebar-accent transition-colors"
@@ -31,7 +40,6 @@ export default function Sidebar() {
         </span>
       </Link>
 
-      {/* Navigation */}
       <nav className="flex flex-col gap-1 p-3 flex-1">
         {navItems.map(({ to, label, icon: Icon }) => (
           <NavLink
@@ -52,19 +60,20 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      {/* Utilisateur en bas */}
       <div className="p-4 border-t border-sidebar-border">
         <Popover>
           <PopoverTrigger asChild>
             <button className="flex items-center gap-3 w-full hover:bg-sidebar-accent rounded-md p-1 transition-colors">
               <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-bold flex-shrink-0">
-                MY
+                {initials}
               </div>
               <div className="text-left">
                 <p className="text-sm font-medium text-sidebar-foreground">
-                  Mme Y
+                  {user?.name ?? "—"}
                 </p>
-                <p className="text-xs text-muted-foreground">RH Admin</p>
+                <p className="text-xs text-muted-foreground">
+                  {user?.role ?? "—"}
+                </p>
               </div>
             </button>
           </PopoverTrigger>

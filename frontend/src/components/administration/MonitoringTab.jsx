@@ -1,57 +1,87 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-
-const apiKpis = [
-  { label: "Statut API",        value: "UP",    sub: "Opérationnel",      subColor: "text-accent" },
-  { label: "Requêtes (24h)",    value: "1 284", sub: "↑ +12 % vs hier",   subColor: "text-accent" },
-  { label: "Latence moy.",      value: "142ms", sub: "Normal",            subColor: "text-muted-foreground" },
-  { label: "Erreurs (24h)",     value: "3",     sub: "1× 403 · 2× 404",  subColor: "text-yellow-600" },
-]
-
-const endpoints = [
-  { route: "GET /predictions",       count: 612, color: "bg-primary",     pct: 48 },
-  { route: "GET /employees",         count: 387, color: "bg-secondary",   pct: 30 },
-  { route: "POST /auth/login",       count: 198, color: "bg-accent",      pct: 16 },
-  { route: "PATCH /users/{id}/role", count: 87,  color: "bg-yellow-500",  pct: 7  },
-]
+import { useState, useEffect } from "react";
+import { adminService } from "@/lib/services";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function MonitoringTab() {
+  const [metrics, setMetrics] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    adminService
+      .getMetrics()
+      .then((res) => setMetrics(res.data))
+      .catch(() => setError("Impossible de charger les métriques"))
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading)
+    return (
+      <div className="flex items-center justify-center h-40">
+        <p className="text-sm text-muted-foreground">Chargement...</p>
+      </div>
+    );
+
+  if (error)
+    return (
+      <div className="flex items-center justify-center h-40">
+        <p className="text-sm text-destructive">{error}</p>
+      </div>
+    );
+
+  const apiKpis = [
+    {
+      label: "Statut API",
+      value: metrics.status === "ok" ? "UP" : "DOWN",
+      subColor: "text-accent",
+    },
+    {
+      label: "Requêtes (24h)",
+      value: metrics.requests_24h.toLocaleString(),
+      subColor: "text-accent",
+    },
+    {
+      label: "Latence moy.",
+      value: `${metrics.avg_latency_ms}ms`,
+      subColor: "text-muted-foreground",
+    },
+    {
+      label: "Erreurs (24h)",
+      value: metrics.errors_24h,
+      subColor: "text-yellow-600",
+    },
+  ];
+
   return (
     <div className="flex flex-col gap-4">
-
-      {/* KPIs */}
       <div className="grid grid-cols-4 gap-4">
-        {apiKpis.map(({ label, value, sub, subColor }) => (
+        {apiKpis.map(({ label, value, subColor }) => (
           <Card key={label}>
             <CardContent className="p-4">
-              <p className="text-xs text-muted-foreground uppercase tracking-wide mb-2">{label}</p>
-              <p className="text-2xl font-bold text-foreground">{value}</p>
-              <p className={`text-xs mt-1 ${subColor}`}>{sub}</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wide mb-2">
+                {label}
+              </p>
+              <p className={`text-2xl font-bold ${subColor}`}>{value}</p>
             </CardContent>
           </Card>
         ))}
       </div>
 
-      {/* Répartition endpoints */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">Répartition des endpoints</CardTitle>
-          <p className="text-xs text-muted-foreground">Requêtes par route — 24h</p>
+          <CardTitle className="text-base">Informations batch</CardTitle>
         </CardHeader>
-        <CardContent className="flex flex-col gap-4">
-          {endpoints.map(({ route, count, color, pct }) => (
-            <div key={route} className="flex flex-col gap-1.5">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-mono text-foreground">{route}</span>
-                <span className="text-xs text-muted-foreground">{count}</span>
-              </div>
-              <div className="h-1.5 rounded-full bg-muted overflow-hidden">
-                <div className={`h-full rounded-full ${color}`} style={{ width: `${pct}%` }} />
-              </div>
-            </div>
-          ))}
+        <CardContent className="flex flex-col gap-2">
+          <div className="flex justify-between text-sm">
+            <span className="text-muted-foreground">Dernier batch</span>
+            <span className="font-mono">{metrics.last_batch_date}</span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-muted-foreground">Collaborateurs scorés</span>
+            <span className="font-mono">{metrics.employees_scored}</span>
+          </div>
         </CardContent>
       </Card>
-
     </div>
-  )
+  );
 }
