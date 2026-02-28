@@ -1,9 +1,10 @@
 from datetime import datetime, timedelta, timezone
 from jose import jwt, JWTError
+import os
 
 # Secret key that signs the tokens
 # In production: environment variable, never hardcoded
-SECRET_KEY = "dev_secret_key_change_in_production"
+SECRET_KEY = os.getenv("SECRET_KEY", "dev_secret_key_change_in_production")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
@@ -28,7 +29,9 @@ def decode_access_token(token: str) -> dict | None:
     Returns the payload if valid, None if invalid or expired.
     """
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM]) # Attend une liste, mêne si on en utilise qu’un
+        payload = jwt.decode(
+            token, SECRET_KEY, algorithms=[ALGORITHM]
+        )  # Attend une liste, mêne si on en utilise qu’un
         return payload
     except JWTError:
         return None

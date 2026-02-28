@@ -2,7 +2,7 @@ import axios from "axios"
 
 // Instance axios configurée pour ton API
 const api = axios.create({
-  baseURL: "http://localhost:8000", // URL de base de ton API FastAPI, juste à faire axios.get("/predictions"))
+  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:8000",
 })
 
 api.interceptors.request.use((config) => {
