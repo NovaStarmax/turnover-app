@@ -1,3 +1,5 @@
+import { useState, useEffect } from "react";
+import { adminService } from "@/lib/services";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,48 +14,64 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-const metrics = [
-  { label: "Version", value: "v1.2", sub: "Random Forest — 150 arbres" },
-  {
-    label: "Entraîné le",
-    value: "14/02/2026",
-    sub: "Données jan. 2024 → fév. 2026",
-  },
-  {
-    label: "Recall (départ)",
-    value: "84 %",
-    sub: "Seuil minimum : 75 %",
-    valueColor: "text-accent",
-  },
-  {
-    label: "AUC-ROC",
-    value: "0.89",
-    sub: "Seuil minimum : 0.75",
-    valueColor: "text-accent",
-  },
-];
-
-const driftVars = [
-  { label: "Ancienneté", pct: 12, value: "3.2 %", color: "bg-accent" },
-  {
-    label: "Absences (6 mois)",
-    pct: 35,
-    value: "8.7 %",
-    color: "bg-yellow-500",
-  },
-  {
-    label: "Temps sans promotion",
-    pct: 20,
-    value: "5.1 %",
-    color: "bg-accent",
-  },
-  { label: "Nb formations", pct: 90, value: "22.4 %", color: "bg-destructive" },
-];
+const driftBarColor = {
+  green: "bg-accent",
+  yellow: "bg-yellow-500",
+  red: "bg-destructive",
+};
 
 export default function ModelTab() {
+  const [model, setModel] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    adminService
+      .getModel()
+      .then((res) => setModel(res.data))
+      .catch(() => setError("Impossible de charger les données du modèle"))
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading)
+    return (
+      <div className="flex items-center justify-center h-40">
+        <p className="text-sm text-muted-foreground">Chargement...</p>
+      </div>
+    );
+
+  if (error)
+    return (
+      <div className="flex items-center justify-center h-40">
+        <p className="text-sm text-destructive">{error}</p>
+      </div>
+    );
+
+  const metrics = [
+    { label: "Version", value: model.version, sub: model.algorithm },
+    {
+      label: "Entraîné le",
+      value: model.trained_at,
+      sub: `Données ${model.data_range}`,
+    },
+    {
+      label: "Recall (départ)",
+      value: `${(model.recall * 100).toFixed(0)} %`,
+      sub: `Seuil minimum : ${(model.recall_threshold * 100).toFixed(0)} %`,
+      valueColor: "text-accent",
+    },
+    {
+      label: "AUC-ROC",
+      value: model.auc_roc,
+      sub: `Seuil minimum : ${model.auc_threshold}`,
+      valueColor: "text-accent",
+    },
+  ];
+
+  const maxDrift = Math.max(...model.drift_variables.map((d) => d.drift_pct));
+
   return (
     <div className="grid grid-cols-2 gap-4">
-      {/* Métriques modèle */}
       <Card>
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
@@ -62,37 +80,35 @@ export default function ModelTab() {
                 Version active du modèle
               </CardTitle>
               <p className="text-xs text-muted-foreground mt-1">
-                Dernière évaluation — 20/02/2026
+                Dernière évaluation — {model.last_evaluation}
               </p>
             </div>
+
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button variant="destructive" size="sm" className="text-xs">
                   Réentraîner
                 </Button>
               </AlertDialogTrigger>
-
               <AlertDialogContent>
                 <AlertDialogHeader>
                   <AlertDialogTitle>Relancer l'entraînement ?</AlertDialogTitle>
                   <AlertDialogDescription>
                     Cette action va déclencher un réentraînement complet du
-                    modèle sur les données disponibles. Le processus peut
-                    prendre plusieurs minutes. Le modèle actuel restera actif
-                    jusqu'à la fin.
+                    modèle. Le processus peut prendre plusieurs minutes.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
-
                 <AlertDialogFooter>
                   <AlertDialogCancel>Annuler</AlertDialogCancel>
                   <AlertDialogAction className="bg-destructive hover:bg-destructive/90">
-                    Confirmer le réentraînement
+                    Confirmer
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
           </div>
         </CardHeader>
+
         <CardContent className="grid grid-cols-2 gap-3">
           {metrics.map(({ label, value, sub, valueColor }) => (
             <div key={label} className="bg-muted rounded-lg p-3">
@@ -110,7 +126,6 @@ export default function ModelTab() {
         </CardContent>
       </Card>
 
-      {/* Dérive */}
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-base">Dérive des variables</CardTitle>
@@ -118,19 +133,20 @@ export default function ModelTab() {
             Écart distribution train vs production
           </p>
         </CardHeader>
+
         <CardContent className="flex flex-col gap-4">
-          {driftVars.map(({ label, pct, value, color }) => (
+          {model.drift_variables.map(({ label, drift_pct, color }) => (
             <div key={label} className="flex flex-col gap-1.5">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-foreground">{label}</span>
                 <span className="text-xs font-mono text-muted-foreground">
-                  {value} dérive
+                  {drift_pct} % dérive
                 </span>
               </div>
               <div className="h-1.5 rounded-full bg-muted overflow-hidden">
                 <div
-                  className={`h-full rounded-full ${color}`}
-                  style={{ width: `${pct}%` }}
+                  className={`h-full rounded-full ${driftBarColor[color]}`}
+                  style={{ width: `${(drift_pct / maxDrift) * 100}%` }}
                 />
               </div>
             </div>

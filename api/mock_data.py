@@ -6,6 +6,11 @@ employees = [
         "tenure": "2 ans 3 mois",
         "score": 0.92,
         "risk": "high",
+        "contract": "CDI",
+        "position": "Chargé de clientèle senior",
+        "start_date": "Mars 2023",
+        "absences": 9,
+        "last_promotion": "Aucune",
     },
     {
         "id": "EMP-0187",
@@ -14,6 +19,11 @@ employees = [
         "tenure": "1 an 8 mois",
         "score": 0.87,
         "risk": "high",
+        "contract": "CDI",
+        "position": "Développeur backend",
+        "start_date": "Juin 2023",
+        "absences": 6,
+        "last_promotion": "Aucune",
     },
     {
         "id": "EMP-0334",
@@ -22,6 +32,11 @@ employees = [
         "tenure": "4 ans",
         "score": 0.71,
         "risk": "high",
+        "contract": "CDI",
+        "position": "Contrôleur de gestion",
+        "start_date": "Janvier 2021",
+        "absences": 4,
+        "last_promotion": "Il y a 2 ans",
     },
     {
         "id": "EMP-0562",
@@ -30,6 +45,11 @@ employees = [
         "tenure": "3 ans 1 mois",
         "score": 0.65,
         "risk": "medium",
+        "contract": "CDI",
+        "position": "Commercial terrain",
+        "start_date": "Janvier 2022",
+        "absences": 3,
+        "last_promotion": "Il y a 1 an",
     },
     {
         "id": "EMP-0093",
@@ -38,6 +58,11 @@ employees = [
         "tenure": "5 ans 7 mois",
         "score": 0.58,
         "risk": "medium",
+        "contract": "CDI",
+        "position": "Chargée RH",
+        "start_date": "Juillet 2019",
+        "absences": 2,
+        "last_promotion": "Il y a 3 ans",
     },
     {
         "id": "EMP-0278",
@@ -46,6 +71,11 @@ employees = [
         "tenure": "8 mois",
         "score": 0.54,
         "risk": "medium",
+        "contract": "CDD",
+        "position": "Développeur frontend",
+        "start_date": "Juin 2025",
+        "absences": 1,
+        "last_promotion": "Aucune",
     },
     {
         "id": "EMP-0401",
@@ -54,6 +84,11 @@ employees = [
         "tenure": "2 ans",
         "score": 0.49,
         "risk": "medium",
+        "contract": "CDI",
+        "position": "Juriste",
+        "start_date": "Février 2023",
+        "absences": 2,
+        "last_promotion": "Aucune",
     },
     {
         "id": "EMP-0155",
@@ -62,6 +97,11 @@ employees = [
         "tenure": "7 ans 2 mois",
         "score": 0.41,
         "risk": "medium",
+        "contract": "CDI",
+        "position": "Directeur adjoint",
+        "start_date": "Décembre 2017",
+        "absences": 1,
+        "last_promotion": "Il y a 2 ans",
     },
     {
         "id": "EMP-0312",
@@ -70,6 +110,11 @@ employees = [
         "tenure": "3 ans 5 mois",
         "score": 0.28,
         "risk": "low",
+        "contract": "CDI",
+        "position": "Comptable",
+        "start_date": "Septembre 2021",
+        "absences": 0,
+        "last_promotion": "Il y a 1 an",
     },
     {
         "id": "EMP-0489",
@@ -78,6 +123,11 @@ employees = [
         "tenure": "6 ans",
         "score": 0.19,
         "risk": "low",
+        "contract": "CDI",
+        "position": "Responsable commercial",
+        "start_date": "Février 2019",
+        "absences": 0,
+        "last_promotion": "Il y a 6 mois",
     },
     {
         "id": "EMP-0210",
@@ -86,6 +136,11 @@ employees = [
         "tenure": "1 an",
         "score": 0.15,
         "risk": "low",
+        "contract": "CDI",
+        "position": "Assistant RH",
+        "start_date": "Février 2025",
+        "absences": 0,
+        "last_promotion": "Aucune",
     },
     {
         "id": "EMP-0367",
@@ -94,6 +149,11 @@ employees = [
         "tenure": "4 ans 2 mois",
         "score": 0.12,
         "risk": "low",
+        "contract": "CDI",
+        "position": "Lead développeur",
+        "start_date": "Décembre 2020",
+        "absences": 0,
+        "last_promotion": "Il y a 1 an",
     },
 ]
 
@@ -284,6 +344,7 @@ users = [
         "password": "admin123",
         "role": "RH_ADMIN",
         "name": "Mme Y",
+        "service": None,
     },
     {
         "id": 2,
@@ -291,6 +352,7 @@ users = [
         "password": "rh123",
         "role": "RH_STANDARD",
         "name": "C. Vidal",
+        "service": None,
     },
     {
         "id": 3,
@@ -298,5 +360,65 @@ users = [
         "password": "manager123",
         "role": "MANAGER",
         "name": "P. Rousseau",
+        "service": "Commercial",
+    },
+]
+
+
+employee_history = {
+    "EMP-0421": [
+        {
+            "date": "20/02/2026",
+            "author": "Système",
+            "text": "Score passé en risque élevé",
+            "type": "alert",
+        },
+        {
+            "date": "15/01/2026",
+            "author": "Mme Y",
+            "text": "Retours managériaux mitigés, à surveiller",
+            "type": "comment",
+        },
+        {
+            "date": "10/12/2025",
+            "author": "Manager",
+            "text": "Entretien annuel réalisé",
+            "type": "event",
+        },
+        {
+            "date": "Mars 2023",
+            "author": "Onboarding",
+            "text": "Prise de poste — Chargé de clientèle senior",
+            "type": "event",
+        },
+    ],
+    "EMP-0187": [
+        {
+            "date": "20/02/2026",
+            "author": "Système",
+            "text": "Score passé en risque élevé",
+            "type": "alert",
+        },
+        {
+            "date": "10/12/2025",
+            "author": "Manager",
+            "text": "Entretien annuel réalisé",
+            "type": "event",
+        },
+        {
+            "date": "Juin 2023",
+            "author": "Onboarding",
+            "text": "Prise de poste — Développeur backend",
+            "type": "event",
+        },
+    ],
+}
+
+default_history = [
+    {
+        "date": "20/02/2026",
+        "author": "Système",
+        "text": "Scoring batch réalisé",
+        "type": "event",
     },
 ]

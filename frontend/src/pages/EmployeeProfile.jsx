@@ -12,16 +12,20 @@ export default function EmployeeProfile() {
 
   const [employee, setEmployee] = useState(null);
   const [prediction, setPrediction] = useState(null);
+  const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // On lance les deux appels en parallèle
-    // Promise.all attend que les DEUX soient terminés
-    Promise.all([employeeService.getById(id), predictionService.getById(id)])
-      .then(([empRes, predRes]) => {
+    Promise.all([
+      employeeService.getById(id),
+      predictionService.getById(id),
+      employeeService.getHistory(id),
+    ])
+      .then(([empRes, predRes, histRes]) => {
         setEmployee(empRes.data);
         setPrediction(predRes.data);
+        setHistory(histRes.data.history);
       })
       .catch(() => setError("Impossible de charger la fiche collaborateur"))
       .finally(() => setLoading(false));
@@ -41,36 +45,13 @@ export default function EmployeeProfile() {
       </div>
     );
 
-  // Données combinées employé + prédiction
   const fullEmployee = {
     ...employee,
     score: prediction.score,
     risk: prediction.risk,
     trend: prediction.trend,
     shapFactors: prediction.shap_factors,
-    // Données pas encore dans l'API — valeurs par défaut en attendant la BDD
-    contract: "CDI",
-    position: "—",
-    startDate: "—",
-    absences: 0,
-    lastPromotion: "—",
   };
-
-  // Historique mocké en attendant la route API
-  const history = [
-    {
-      date: "20/02/2026",
-      author: "Système",
-      text: "Score passé en risque élevé",
-      type: "alert",
-    },
-    {
-      date: "10/12/2025",
-      author: "Manager",
-      text: "Entretien annuel réalisé",
-      type: "event",
-    },
-  ];
 
   return (
     <div className="flex flex-col gap-6">

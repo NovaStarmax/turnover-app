@@ -20,10 +20,29 @@ export default function App() {
             </ProtectedRoute>
           }
         >
-          <Route path="/dashboard" element={<Dashboard />} />
+          {/* RH_ADMIN + RH_STANDARD */}
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute roles={["RH_ADMIN", "RH_STANDARD"]}>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Tous les rôles */}
           <Route path="/employees" element={<Employees />} />
           <Route path="/employee/:id" element={<EmployeeProfile />} />
-          <Route path="/administration" element={<Administration />} />
+
+          {/* RH_ADMIN seulement */}
+          <Route
+            path="/administration"
+            element={
+              <ProtectedRoute roles={["RH_ADMIN"]}>
+                <Administration />
+              </ProtectedRoute>
+            }
+          />
         </Route>
       </Routes>
     </BrowserRouter>

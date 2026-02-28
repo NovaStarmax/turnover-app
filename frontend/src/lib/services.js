@@ -1,6 +1,5 @@
 import api from "./api"
 
-// Employés
 export const employeeService = {
   getAll: (filters = {}) => {
     const params = new URLSearchParams()
@@ -8,11 +7,10 @@ export const employeeService = {
     if (filters.risk && filters.risk !== "all") params.append("risk", filters.risk)
     return api.get(`/employees?${params.toString()}`)
   },
-
   getById: (id) => api.get(`/employees/${id}`),
+  getHistory: (id) => api.get(`/employees/${id}/history`),
 }
 
-// Prédictions
 export const predictionService = {
   getAll: (filters = {}) => {
     const params = new URLSearchParams()
@@ -20,11 +18,9 @@ export const predictionService = {
     if (filters.service && filters.service !== "Tous") params.append("service", filters.service)
     return api.get(`/predictions?${params.toString()}`)
   },
-
   getById: (id) => api.get(`/predictions/${id}`),
 }
 
-// Utilisateurs
 export const userService = {
   getMe: () => api.get("/users/me"),
   getAll: () => api.get("/users"),
@@ -32,8 +28,8 @@ export const userService = {
   register: (email, role) => api.post("/auth/register", { email, role }),
 }
 
-// Admin
 export const adminService = {
   getMetrics: () => api.get("/admin/metrics"),
+  getModel: () => api.get("/admin/model"),
   getAuditLogs: () => api.get("/admin/audit/logs"),
 }

@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import api from "@/lib/api";
+import api, { parseToken } from "@/lib/api";
 
 // 1. Création du contexte — c'est juste un conteneur vide pour l'instant
 const AuthContext = createContext(null);
@@ -15,14 +15,16 @@ export function AuthProvider({ children }) {
     const token = localStorage.getItem("token");
 
     if (token) {
-      // Token trouvé → on récupère l'utilisateur courant
       api
         .get("/users/me")
-        .then((res) => setUser(res.data))
-        .catch(() => {
-          // Token invalide ou expiré → on nettoie
-          localStorage.removeItem("token");
+        .then((res) => {
+          const tokenPayload = parseToken(token);
+          setUser({
+            ...res.data,
+            service: tokenPayload?.service ?? null,
+          });
         })
+        .catch(() => localStorage.removeItem("token"))
         .finally(() => setLoading(false));
     } else {
       setLoading(false);
@@ -30,17 +32,22 @@ export function AuthProvider({ children }) {
   }, []);
 
   const login = async (email, password) => {
-    // Appel API login
     const res = await api.post("/auth/login", { email, password });
 
-    // Stocke le token dans localStorage
-    localStorage.setItem("token", res.data.access_token);
+    const token = res.data.access_token;
+    localStorage.setItem("token", token);
 
-    // Récupère l'utilisateur complet
+    // Récupère l'utilisateur + enrichit avec service depuis le token
     const meRes = await api.get("/users/me");
-    setUser(meRes.data);
+    const tokenPayload = parseToken(token);
 
-    return meRes.data; // retourné à celui qui appelle login()
+    const fullUser = {
+      ...meRes.data,
+      service: tokenPayload?.service ?? null,
+    };
+
+    setUser(fullUser);
+    return fullUser;
   };
 
   const logout = () => {

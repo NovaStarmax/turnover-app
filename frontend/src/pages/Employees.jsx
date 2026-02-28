@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { employeeService } from "@/lib/services";
+import { useAuth } from "@/contexts/AuthContext";
 import EmployeesTable from "@/components/employees/EmployeesTable";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -28,15 +29,21 @@ const riskLevels = [
 ];
 
 export default function Employees() {
+  const { user } = useAuth();
+
+  const isManager = user?.role === "MANAGER";
+
+  // Si Manager → service verrouillé sur son service depuis le token
+  const [service, setService] = useState(
+    isManager ? (user?.service ?? "Tous") : "Tous",
+  );
+  const [risk, setRisk] = useState("all");
+  const [search, setSearch] = useState("");
+
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const [search, setSearch] = useState("");
-  const [service, setService] = useState("Tous");
-  const [risk, setRisk] = useState("all");
-
-  // Rechargement quand les filtres service ou risk changent
   useEffect(() => {
     setLoading(true);
     employeeService
@@ -44,9 +51,8 @@ export default function Employees() {
       .then((res) => setEmployees(res.data))
       .catch(() => setError("Impossible de charger les collaborateurs"))
       .finally(() => setLoading(false));
-  }, [service, risk]); // ← se relance quand service ou risk change
+  }, [service, risk]);
 
-  // Filtre search appliqué côté front — pas besoin d'appel API
   const filtered = employees.filter((emp) =>
     emp.name.toLowerCase().includes(search.toLowerCase()),
   );
@@ -60,7 +66,6 @@ export default function Employees() {
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Barre de filtres */}
       <div className="flex items-center gap-3 flex-wrap">
         <Input
           placeholder="Rechercher un collaborateur…"
@@ -69,7 +74,8 @@ export default function Employees() {
           className="w-64"
         />
 
-        <Select value={service} onValueChange={setService}>
+        {/* Select service — désactivé pour les Managers */}
+        <Select value={service} onValueChange={setService} disabled={isManager}>
           <SelectTrigger className="w-40">
             <SelectValue placeholder="Service" />
           </SelectTrigger>
@@ -82,6 +88,7 @@ export default function Employees() {
           </SelectContent>
         </Select>
 
+        {/* Filtre risque */}
         <div className="flex gap-1">
           {riskLevels.map((r) => (
             <Button
@@ -103,7 +110,6 @@ export default function Employees() {
         </span>
       </div>
 
-      {/* Tableau */}
       <EmployeesTable employees={filtered} loading={loading} />
     </div>
   );

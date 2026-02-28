@@ -27,10 +27,15 @@ export default function Login() {
     setLoading(true);
 
     try {
-      await login(email, password);
-      navigate("/dashboard");
+      const user = await login(email, password);
+
+      // Redirect selon le rôle
+      if (user.role === "MANAGER") {
+        navigate("/employees");
+      } else {
+        navigate("/dashboard");
+      }
     } catch (err) {
-      // axios met l'erreur API dans err.response.data.detail
       setError(err.response?.data?.detail ?? "Erreur de connexion");
     } finally {
       setLoading(false);

@@ -1,5 +1,4 @@
-import { NavLink, Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
 import { LayoutDashboard, Users, ShieldCheck, LogOut } from "lucide-react";
 import {
   Popover,
@@ -9,17 +8,36 @@ import {
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 
-const navItems = [
-  { to: "/dashboard", label: "Vue d'ensemble", icon: LayoutDashboard },
-  { to: "/employees", label: "Collaborateurs", icon: Users },
-  { to: "/administration", label: "Administration", icon: ShieldCheck },
+const allNavItems = [
+  {
+    to: "/dashboard",
+    label: "Vue d'ensemble",
+    icon: LayoutDashboard,
+    roles: ["RH_ADMIN", "RH_STANDARD"],
+  },
+  {
+    to: "/employees",
+    label: "Collaborateurs",
+    icon: Users,
+    roles: ["RH_ADMIN", "RH_STANDARD", "MANAGER"],
+  },
+  {
+    to: "/administration",
+    label: "Administration",
+    icon: ShieldCheck,
+    roles: ["RH_ADMIN"],
+  },
 ];
 
 export default function Sidebar() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
 
-  // Initiales depuis le nom — "Mme Y" → "MY", "C. Vidal" → "CV"
+  // Filtre les liens selon le rôle de l'utilisateur connecté
+  const navItems = allNavItems.filter((item) =>
+    item.roles.includes(user?.role),
+  );
+
   const initials = user?.name
     ? user.name
         .split(" ")
@@ -32,7 +50,7 @@ export default function Sidebar() {
   return (
     <aside className="w-56 h-screen bg-sidebar border-r border-sidebar-border flex flex-col fixed top-0 left-0">
       <Link
-        to="/dashboard"
+        to={user?.role === "MANAGER" ? "/employees" : "/dashboard"}
         className="px-5 py-5 border-b border-sidebar-border block hover:bg-sidebar-accent transition-colors"
       >
         <span className="font-bold text-sidebar-foreground text-sm tracking-wide uppercase">

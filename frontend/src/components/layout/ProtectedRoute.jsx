@@ -1,24 +1,24 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 
-export default function ProtectedRoute({ children }) {
+export default function ProtectedRoute({ children, roles }) {
   const { user, loading } = useAuth();
 
-  // Le contexte vérifie localStorage au démarrage
-  // On attend que cette vérification soit terminée
-  if (loading) {
+  if (loading)
     return (
       <div className="h-screen flex items-center justify-center">
         <p className="text-sm text-muted-foreground">Chargement...</p>
       </div>
     );
+
+  // Pas connecté → login
+  if (!user) return <Navigate to="/" replace />;
+
+  // Rôle insuffisant → redirect selon le rôle
+  if (roles && !roles.includes(user.role)) {
+    if (user.role === "MANAGER") return <Navigate to="/employees" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
-  // Pas connecté → redirect login
-  if (!user) {
-    return <Navigate to="/" replace />;
-  }
-
-  // Connecté → on affiche la page
   return children;
 }

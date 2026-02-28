@@ -1,23 +1,39 @@
 import { useState, useEffect } from "react";
-import { employeeService } from "@/lib/services";
+import { employeeService, adminService } from "@/lib/services";
 import KpiCard from "@/components/dashboard/KpiCard";
 import TopRiskTable from "@/components/dashboard/TopRiskTable";
 import { Users, TrendingUp, TrendingDown, DollarSign } from "lucide-react";
 
 export default function Dashboard() {
   const [employees, setEmployees] = useState([]);
+  const [metrics, setMetrics] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    employeeService
-      .getAll()
-      .then((res) => setEmployees(res.data))
-      .catch(() => setError("Impossible de charger les données"))
+    Promise.all([employeeService.getAll(), adminService.getMetrics()])
+      .then(([empRes, metricsRes]) => {
+        setEmployees(empRes.data);
+        setMetrics(metricsRes.data);
+      })
+      .catch(() => setError("Impossible de charger le dashboard"))
       .finally(() => setLoading(false));
   }, []);
 
-  // Calculs des KPIs depuis les vraies données
+  if (loading)
+    return (
+      <div className="flex items-center justify-center h-64">
+        <p className="text-sm text-muted-foreground">Chargement...</p>
+      </div>
+    );
+
+  if (error)
+    return (
+      <div className="flex items-center justify-center h-64">
+        <p className="text-sm text-destructive">{error}</p>
+      </div>
+    );
+
   const highRisk = employees.filter((e) => e.risk === "high").length;
   const mediumRisk = employees.filter((e) => e.risk === "medium").length;
   const topRisk = employees
@@ -44,7 +60,7 @@ export default function Dashboard() {
     },
     {
       label: "Turnover actuel",
-      value: 20,
+      value: metrics.turnover_rate,
       suffix: "%",
       delta: "Objectif −5 %",
       deltaType: "neutral",
@@ -52,27 +68,13 @@ export default function Dashboard() {
     },
     {
       label: "Coût évité estimé",
-      value: "84k",
+      value: `${(metrics.cost_avoided / 1000).toFixed(0)}k`,
       suffix: "€",
       delta: "+12k ce mois",
       deltaType: "success",
       icon: DollarSign,
     },
   ];
-
-  if (loading)
-    return (
-      <div className="flex items-center justify-center h-64">
-        <p className="text-sm text-muted-foreground">Chargement...</p>
-      </div>
-    );
-
-  if (error)
-    return (
-      <div className="flex items-center justify-center h-64">
-        <p className="text-sm text-destructive">{error}</p>
-      </div>
-    );
 
   return (
     <div className="flex flex-col gap-6">

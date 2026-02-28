@@ -27,4 +27,14 @@ api.interceptors.response.use(
   }
 )
 
+export function parseToken(token) {
+  try {
+    // Le payload JWT est la partie centrale — encodée en base64
+    const payload = token.split(".")[1]
+    return JSON.parse(atob(payload))
+  } catch {
+    return null
+  }
+}
+
 export default api
