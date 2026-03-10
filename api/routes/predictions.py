@@ -10,7 +10,7 @@ router = APIRouter()
 @router.get(
     "/",
     response_model=list[PredictionOut],
-    dependencies=[Depends(require_role(["RH_ADMIN", "RH_STANDARDS"]))],
+    dependencies=[Depends(require_role(["RH_ADMIN", "RH_STANDARD"]))],
 )
 def get_predictions(
     risk: str | None = Query(default=None),
