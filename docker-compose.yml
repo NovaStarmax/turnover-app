@@ -5,12 +5,16 @@ services:
       - "5173:80"
     depends_on:
       - api
+    environment:
+      - VITE_API_URL=${VITE_API_URL}
 
   api:
     build: ./api
     ports:
       - "8000:8000"
     environment:
-      - SECRET_KEY=dev_secret_key_change_in_production
+      - SECRET_KEY=${SECRET_KEY}
+      - CORS_ORIGINS=${CORS_ORIGINS}
+      # DATABASE_URL=${DATABASE_URL}
 
 volumes: {}

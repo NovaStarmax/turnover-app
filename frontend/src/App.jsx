@@ -20,7 +20,6 @@ export default function App() {
             </ProtectedRoute>
           }
         >
-          {/* RH_ADMIN + RH_STANDARD */}
           <Route
             path="/dashboard"
             element={
@@ -30,11 +29,9 @@ export default function App() {
             }
           />
 
-          {/* Tous les rôles */}
           <Route path="/employees" element={<Employees />} />
           <Route path="/employee/:id" element={<EmployeeProfile />} />
 
-          {/* RH_ADMIN seulement */}
           <Route
             path="/administration"
             element={

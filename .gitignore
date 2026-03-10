@@ -10,3 +10,8 @@ wheels/
 .venv
 frontend/node_modules/
 frontend/dist/
+
+.claude
+.env
+.env.local
+api/.env
