@@ -29,7 +29,7 @@ export const userService = {
 }
 
 export const adminService = {
-  getMetrics: () => api.get("/admin/metrics/"),
-  getModel: () => api.get("/admin/model/"),
+  getMetrics: () => api.get("/admin/metrics"),
+  getModel: () => api.get("/admin/model"),
   getAuditLogs: () => api.get("/admin/audit/logs"),
 }
