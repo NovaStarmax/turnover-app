@@ -24,7 +24,6 @@ export default function ShapFactors({ factors }) {
               </span>
             </div>
 
-            {/* Barre de contribution */}
             <div className="h-1.5 rounded-full bg-muted overflow-hidden">
               <div
                 className={`h-full rounded-full ${factor.positive ? "bg-destructive" : "bg-accent"}`}
@@ -35,7 +34,6 @@ export default function ShapFactors({ factors }) {
           </div>
         ))}
 
-        {/* Disclaimer */}
         <div className="mt-2 p-3 bg-muted rounded-lg">
           <p className="text-xs text-muted-foreground leading-relaxed">
             ⚠ Ce score est une <strong>aide à la décision</strong>. Il ne préjuge pas des intentions du collaborateur. Une revue humaine est recommandée avant toute action.

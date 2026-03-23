@@ -18,7 +18,6 @@ export default function RhHistory({ history }) {
           {history.map((item, index) => (
             <div key={index} className="flex gap-3">
 
-              {/* Dot + ligne verticale */}
               <div className="flex flex-col items-center">
                 <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${dotColor[item.type]}`} />
                 {index < history.length - 1 && (
@@ -26,7 +25,6 @@ export default function RhHistory({ history }) {
                 )}
               </div>
 
-              {/* Contenu */}
               <div className="pb-4">
                 <p className="text-sm text-foreground leading-snug">{item.text}</p>
                 <p className="text-xs text-muted-foreground mt-0.5">

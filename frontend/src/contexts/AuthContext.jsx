@@ -1,16 +1,12 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import api, { parseToken } from "@/lib/api";
 
-// 1. Création du contexte — c'est juste un conteneur vide pour l'instant
 const AuthContext = createContext(null);
 
-// 2. Le Provider — le composant qui va envelopper toute l'app
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Au chargement de l'app — on vérifie si un token existe déjà
-  // (cas où l'utilisateur a déjà été connecté et revient sur l'app)
   useEffect(() => {
     const token = localStorage.getItem("token");
 
@@ -37,7 +33,6 @@ export function AuthProvider({ children }) {
     const token = res.data.access_token;
     localStorage.setItem("token", token);
 
-    // Récupère l'utilisateur + enrichit avec service depuis le token
     const meRes = await api.get("/users/me");
     const tokenPayload = parseToken(token);
 
@@ -55,7 +50,6 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
-  // 3. On expose ce dont les composants ont besoin
   return (
     <AuthContext.Provider value={{ user, login, logout, loading }}>
       {children}
@@ -63,7 +57,6 @@ export function AuthProvider({ children }) {
   );
 }
 
-// 4. Hook custom — pour consommer le contexte proprement
 export function useAuth() {
   const context = useContext(AuthContext);
 

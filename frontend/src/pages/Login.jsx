@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label";
 
 export default function Login() {
   const navigate = useNavigate();
-  const { login } = useAuth(); // Comme l’app est enveloppée dans AuthProvider, on a accès à login() via le contexte
+  const { login } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -29,7 +29,6 @@ export default function Login() {
     try {
       const user = await login(email, password);
 
-      // Redirect selon le rôle
       if (user.role === "MANAGER") {
         navigate("/employees");
       } else {
@@ -76,7 +75,6 @@ export default function Login() {
               />
             </div>
 
-            {/* Affiche l'erreur si login échoue */}
             {error && <p className="text-sm text-destructive">{error}</p>}
 
             <Button type="submit" className="w-full" disabled={loading}>

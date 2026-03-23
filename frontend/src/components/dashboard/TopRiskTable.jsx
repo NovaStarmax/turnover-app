@@ -47,7 +47,6 @@ export default function TopRiskTable({ employees }) {
 
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    {/* Barre de score */}
                     <div className="w-16 h-1.5 rounded-full bg-muted overflow-hidden">
                       <div
                         className="h-full rounded-full bg-primary"

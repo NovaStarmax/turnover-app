@@ -21,12 +21,10 @@ def get_by_email(email: str) -> dict | None:
 
 
 def update_role(user_id: int, new_role: str) -> dict | None:
-    # On cherche l'user par id
     user = next((u for u in users if u["id"] == user_id), None)
     if not user:
         return None
 
-    # On modifie directement dans la liste en mémoire
     user["role"] = new_role
 
     return {

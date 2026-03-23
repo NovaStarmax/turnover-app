@@ -33,7 +33,6 @@ export default function Sidebar() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
 
-  // Filtre les liens selon le rôle de l'utilisateur connecté
   const navItems = allNavItems.filter((item) =>
     item.roles.includes(user?.role),
   );

@@ -16,7 +16,7 @@ def login(email: str, password: str) -> dict | None:
             "sub": user["email"],
             "role": user["role"],
             "name": user["name"],
-            "service": user.get("service"),  # None si pas de service (RH_ADMIN)
+            "service": user.get("service"),
         }
     )
 
@@ -43,12 +43,11 @@ def register(email: str, role: str) -> dict | None:
     new_user = {
         "id": len(users) + 1,
         "email": email,
-        "password": temp_password,  # en prod : on hasherait avec bcrypt
+        "password": temp_password,
         "role": role,
-        "name": email.split("@")[0],  # nom temporaire depuis l'email
+        "name": email.split("@")[0],
     }
 
-    # Ajout en mémoire — perdu au redémarrage sans BDD
     users.append(new_user)
 
     return {

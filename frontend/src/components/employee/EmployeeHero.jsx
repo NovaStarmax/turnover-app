@@ -13,7 +13,6 @@ export default function EmployeeHero({ employee }) {
     <Card>
       <CardContent className="p-6 flex flex-col gap-5">
 
-        {/* Identité */}
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold text-sm">
@@ -28,7 +27,6 @@ export default function EmployeeHero({ employee }) {
             </div>
           </div>
 
-          {/* Score */}
           <div className="flex flex-col items-end gap-2">
             <span className="text-3xl font-bold font-mono text-foreground">
               {employee.score.toFixed(2)}
@@ -37,7 +35,6 @@ export default function EmployeeHero({ employee }) {
           </div>
         </div>
 
-        {/* Tuiles infos */}
         <div className="grid grid-cols-4 gap-3">
           {infoTiles(employee).map(({ label, value }) => (
             <div key={label} className="bg-muted rounded-lg p-3">

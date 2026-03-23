@@ -8,11 +8,6 @@ router = APIRouter()
 
 @router.get("/me", response_model=UserOut)
 def get_me(current_user: dict = Depends(get_current_user)):
-    """
-    Retourne l'utilisateur actuellement connecté.
-    current_user contient le payload du token : { sub, role, name }
-    On récupère l'user complet depuis les mocks via son email (sub)
-    """
     user = user_service.get_by_email(current_user["sub"])
     if not user:
         raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
@@ -34,11 +29,6 @@ def update_role(
     body: UpdateRoleRequest,
     current_user: dict = Depends(require_role(["RH_ADMIN"])),
 ):
-    """
-    Modifie le rôle d'un utilisateur.
-    Réservé aux RH_ADMIN uniquement.
-    """
-    # Sécurité : un admin ne peut pas changer son propre rôle
     me = user_service.get_by_email(current_user["sub"])
     if me and me["id"] == user_id:
         raise HTTPException(

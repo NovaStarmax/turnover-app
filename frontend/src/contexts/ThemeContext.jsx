@@ -3,7 +3,6 @@ import { createContext, useContext, useEffect, useState } from "react";
 const ThemeContext = createContext(null);
 
 export function ThemeProvider({ children }) {
-  // Récupère le thème sauvegardé, sinon "light" par défaut
   const [theme, setTheme] = useState(
     () => localStorage.getItem("theme") ?? "light",
   );

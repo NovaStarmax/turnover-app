@@ -1,6 +1,5 @@
 import axios from "axios"
 
-// Instance axios configurée pour ton API
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
 })
@@ -12,7 +11,7 @@ api.interceptors.request.use((config) => {
     config.headers.Authorization = `Bearer ${token}`
   }
 
-  return config // n'oublie pas de retourner la config pour que la requête puisse continuer, même sans token
+  return config
 })
 
 api.interceptors.response.use(
@@ -21,7 +20,7 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem("token")
-      window.location.href = "/"  // redirect vers login
+      window.location.href = "/"
     }
     return Promise.reject(error)
   }
@@ -29,7 +28,6 @@ api.interceptors.response.use(
 
 export function parseToken(token) {
   try {
-    // Le payload JWT est la partie centrale — encodée en base64
     const payload = token.split(".")[1]
     return JSON.parse(atob(payload))
   } catch {

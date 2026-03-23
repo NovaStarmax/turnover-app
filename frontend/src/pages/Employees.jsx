@@ -33,7 +33,6 @@ export default function Employees() {
 
   const isManager = user?.role === "MANAGER";
 
-  // Si Manager → service verrouillé sur son service depuis le token
   const [service, setService] = useState(
     isManager ? (user?.service ?? "Tous") : "Tous",
   );
@@ -74,7 +73,6 @@ export default function Employees() {
           className="w-64"
         />
 
-        {/* Select service — désactivé pour les Managers */}
         <Select value={service} onValueChange={setService} disabled={isManager}>
           <SelectTrigger className="w-40">
             <SelectValue placeholder="Service" />
@@ -88,7 +86,6 @@ export default function Employees() {
           </SelectContent>
         </Select>
 
-        {/* Filtre risque */}
         <div className="flex gap-1">
           {riskLevels.map((r) => (
             <Button

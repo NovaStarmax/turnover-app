@@ -11,10 +11,8 @@ export default function ProtectedRoute({ children, roles }) {
       </div>
     );
 
-  // Pas connecté → login
   if (!user) return <Navigate to="/" replace />;
 
-  // Rôle insuffisant → redirect selon le rôle
   if (roles && !roles.includes(user.role)) {
     if (user.role === "MANAGER") return <Navigate to="/employees" replace />;
     return <Navigate to="/dashboard" replace />;

@@ -20,7 +20,6 @@ export default function Topbar() {
       <h1 className="text-sm font-semibold text-foreground">{title}</h1>
 
       <div className="flex items-center gap-4">
-        {/* Statut scoring */}
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-accent" />
           <span className="text-xs text-muted-foreground">
@@ -28,7 +27,6 @@ export default function Topbar() {
           </span>
         </div>
 
-        {/* Toggle dark mode */}
         <Button
           variant="ghost"
           size="sm"
