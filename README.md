@@ -4,6 +4,18 @@ A full-stack HR intelligence platform that uses machine learning to predict empl
 
 ---
 
+## Live Demo
+
+A public demo of the application is available:
+
+🔗 https://turnover-app.starspath-place.fr/
+
+**Demo credentials:**
+- Email: admin@entreprise.fr
+- Password: admin123
+
+---
+
 ## Overview
 
 RH Predict combines a **FastAPI** REST backend, a **React** single-page application, and a **scikit-learn** ML pipeline to deliver interpretable turnover risk scores at scale. Each prediction is backed by SHAP factor analysis, giving HR managers actionable insight rather than a black-box score.
